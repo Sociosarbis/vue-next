@@ -271,12 +271,14 @@ const myEmit = defineEmit(['foo', 'bar'])
         import { ref } from 'vue'
         const count = ref(0)
         const maybe = foo()
+        let letRef = ref(1)
         let lett = 1
         </script>
         <template>
           <input v-model="count">
           <input v-model="maybe">
           <input v-model="lett">
+          <div @click="letRef += 1"></div>
         </template>
         `,
         { inlineTemplate: true }
@@ -289,6 +291,9 @@ const myEmit = defineEmit(['foo', 'bar'])
       // let: handle both cases
       expect(content).toMatch(
         `_isRef(lett) ? lett.value = $event : lett = $event`
+      )
+      expect(content).toMatch(
+        `_isRef(letRef) ? letRef.value += 1 : letRef += 1`
       )
       assertCode(content)
     })

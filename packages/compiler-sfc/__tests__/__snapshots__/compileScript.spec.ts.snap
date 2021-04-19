@@ -463,6 +463,7 @@ export default {
 
         const count = ref(0)
         const maybe = foo()
+        let letRef = ref(1)
         let lett = 1
         
 return (_ctx, _cache) => {
@@ -481,7 +482,10 @@ return (_ctx, _cache) => {
       \\"onUpdate:modelValue\\": _cache[3] || (_cache[3] = $event => (_isRef(lett) ? lett.value = $event : lett = $event))
     }, null, 512 /* NEED_PATCH */), [
       [_vModelText, _unref(lett)]
-    ])
+    ]),
+    _createVNode(\\"div\\", {
+      onClick: _cache[4] || (_cache[4] = $event => (_isRef(letRef) ? letRef.value += 1 : letRef += 1))
+    })
   ], 64 /* STABLE_FRAGMENT */))
 }
 }
