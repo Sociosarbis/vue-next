@@ -85,12 +85,13 @@ export const TeleportImpl = {
 
     const disabled = isTeleportDisabled(n2.props)
     const { shapeFlag, children } = n2
+    let dynamicChildren = n2.dynamicChildren
 
     // #3302
     // HMR updated, force full diff
     if (__DEV__ && isHmrUpdating) {
       optimized = false
-      n2.dynamicChildren = null
+      dynamicChildren = null
     }
 
     if (n1 == null) {
@@ -146,11 +147,11 @@ export const TeleportImpl = {
       const currentAnchor = wasDisabled ? mainAnchor : targetAnchor
       isSVG = isSVG || isTargetSVG(target)
 
-      if (n2.dynamicChildren) {
+      if (dynamicChildren) {
         // fast path when the teleport happens to be a block root
         patchBlockChildren(
           n1.dynamicChildren!,
-          n2.dynamicChildren,
+          dynamicChildren,
           currentContainer,
           parentComponent,
           parentSuspense,
