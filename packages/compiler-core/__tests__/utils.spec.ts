@@ -1,5 +1,9 @@
 import { Position } from '../src/ast'
-import { getInnerRange, advancePositionWithClone } from '../src/utils'
+import {
+  getInnerRange,
+  advancePositionWithClone,
+  isMemberExpression
+} from '../src/utils'
 
 function p(line: number, column: number, offset: number): Position {
   return { column, line, offset }
@@ -65,5 +69,21 @@ describe('getInnerRange', () => {
     expect(loc2.end.column).toBe(4)
     expect(loc2.end.line).toBe(2)
     expect(loc2.end.offset).toBe(7)
+  })
+})
+
+describe('isMemberExpression', () => {
+  test('work correctly', () => {
+    expect(isMemberExpression('y[x[0]]')).toEqual(true)
+    expect(isMemberExpression('y.x')).toEqual(true)
+    expect(isMemberExpression('y.x.z')).toEqual(true)
+    expect(isMemberExpression('y.x[0]')).toEqual(true)
+    expect(isMemberExpression('y.x[z[0]]')).toEqual(true)
+    expect(isMemberExpression('y.x[z[a.b[c[0]]]]')).toEqual(true)
+
+    expect(isMemberExpression('yx[0]]')).toEqual(false)
+    expect(isMemberExpression('y.x[0')).toEqual(false)
+    expect(isMemberExpression('y.x[z[0]]]')).toEqual(false)
+    expect(isMemberExpression('[y.x[za.b[c[0]]]')).toEqual(false)
   })
 })
