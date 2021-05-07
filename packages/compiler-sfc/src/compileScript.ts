@@ -656,29 +656,39 @@ export function compileScript(
       s.remove(node.start! + startOffset, node.end! + startOffset)
     }
     if (node.type === 'VariableDeclaration' && !node.declare) {
-      for (const decl of node.declarations) {
-        if (decl.init) {
-          const isDefineProps = processDefineProps(decl.init)
-          if (isDefineProps) {
-            propsIdentifier = scriptSetup.content.slice(
-              decl.id.start!,
-              decl.id.end!
-            )
-          }
-          const isDefineEmit = processDefineEmit(decl.init)
-          if (isDefineEmit) {
-            emitIdentifier = scriptSetup.content.slice(
-              decl.id.start!,
-              decl.id.end!
-            )
-          }
-          if (isDefineProps || isDefineEmit)
-            if (node.declarations.length === 1) {
-              s.remove(node.start! + startOffset, node.end! + startOffset)
-            } else {
-              s.remove(decl.start! + startOffset, decl.end! + startOffset)
+      const remainDeclCount = node.declarations.reduce(
+        (acc, decl, i, declarations) => {
+          if (decl.init) {
+            const isDefineProps = processDefineProps(decl.init)
+            if (isDefineProps) {
+              propsIdentifier = scriptSetup.content.slice(
+                decl.id.start!,
+                decl.id.end!
+              )
             }
-        }
+            const isDefineEmit = processDefineEmit(decl.init)
+            if (isDefineEmit) {
+              emitIdentifier = scriptSetup.content.slice(
+                decl.id.start!,
+                decl.id.end!
+              )
+            }
+            if (isDefineProps || isDefineEmit) {
+              acc -= 1
+              s.remove(
+                decl.start! + startOffset,
+                (i !== declarations.length - 1
+                  ? declarations[i + 1].start!
+                  : decl.end!) + startOffset
+              )
+            }
+          }
+          return acc
+        },
+        node.declarations.length
+      )
+      if (remainDeclCount === 0) {
+        s.remove(node.start! + startOffset, node.end! + startOffset)
       }
     }
 
