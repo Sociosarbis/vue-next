@@ -519,6 +519,7 @@ export function applyOptions(
     renderTracked,
     renderTriggered,
     errorCaptured,
+    inheritAttrs,
     // public API
     expose
   } = options
@@ -806,6 +807,10 @@ export function applyOptions(
   }
   if (unmounted) {
     onUnmounted(unmounted.bind(publicThis))
+  }
+
+  if (typeof inheritAttrs === 'boolean') {
+    instance.type.inheritAttrs = inheritAttrs
   }
 
   if (isArray(expose)) {
