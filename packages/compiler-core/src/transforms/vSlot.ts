@@ -327,7 +327,7 @@ export function buildSlots(
     : hasForwardedSlots(node.children)
       ? SlotFlags.FORWARDED
       : SlotFlags.STABLE
-
+  // only compiled slot has _ property
   let slots = createObjectExpression(
     slotsProperties.concat(
       createObjectProperty(

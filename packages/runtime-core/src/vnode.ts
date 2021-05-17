@@ -628,8 +628,11 @@ export function normalizeChildren(vnode: VNode, children: unknown) {
       } else if (slotFlag === SlotFlags.FORWARDED && currentRenderingInstance) {
         // a child component receives forwarded slots from the parent.
         // its slot type is determined by its parent's slot type.
+        const parentVNode = currentRenderingInstance.vnode
         if (
-          currentRenderingInstance.vnode.patchFlag & PatchFlags.DYNAMIC_SLOTS
+          parentVNode.patchFlag & PatchFlags.DYNAMIC_SLOTS ||
+          // handle non-compiled slots, treat them as dynamic slots
+          (parentVNode.children && !('_' in (parentVNode.children as RawSlots)))
         ) {
           ;(children as RawSlots)._ = SlotFlags.DYNAMIC
           vnode.patchFlag |= PatchFlags.DYNAMIC_SLOTS
